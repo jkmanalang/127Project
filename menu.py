@@ -12,7 +12,7 @@ import functions
 while True:
 
 	print ("""													
-		\n=================== Menu ====================
+=================== Menu ====================
    [0] View Task (all)
    [1] Add/Create task
    [2] Edit Task

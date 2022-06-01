@@ -3,7 +3,6 @@ import functions
 # import ast
 
 def viewTask ():
-	print("in view task")
 	functions.getAllCategories()
 
 def addCreateTask ():

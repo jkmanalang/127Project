@@ -28,4 +28,5 @@ CREATE TABLE IF NOT EXISTS `task`(
 
 insert into task (taskNo, categoryNo, dueDate, details, taskStatus) values
 	(1, 1, str_to_date('15-OCT-2022','%d-%M-%Y'), 'Long quiz #1', "Not yet started"),
-	(2, 2, str_to_date('02-JUN-2022','%d-%M-%Y'), 'Exercise #4', "In-progress");
+	(2, 2, str_to_date('02-JUN-2022','%d-%M-%Y'), 'Exercise #4', "In-progress"),
+	(3, 2, str_to_date('02-JUN-2022','%d-%M-%Y'), 'HAHA', "In-progress");
