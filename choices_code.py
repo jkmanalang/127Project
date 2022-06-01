@@ -12,8 +12,8 @@ def editTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 def deleteTask ():
 	print("in delete task")
 
-def markAsDone ():
-	print("in mark as done")
+def markAsDone (): #DONE!!!
+	functions.markAsDone()
 
 def addCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.addCategory()
@@ -27,7 +27,7 @@ def deleteCategory ():
 def viewCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.viewCategory()
 
-def addTaskToCategory ():
-	print("in adding task to category")
+def addTaskToCategory ():#DONE!!!
+	functions.addTask()
 
 	
