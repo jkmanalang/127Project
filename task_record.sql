@@ -2,9 +2,6 @@ DROP DATABASE IF EXISTS `task_record`;
 CREATE DATABASE IF NOT EXISTS `task_record`;
 USE `task_record`;
 
-CREATE USER 'sampleUser'@'localhost' IDENTIFIED BY 'password_user';
-GRANT ALL ON task_record.* TO 'sampleUser'@'localhost';
-
 CREATE TABLE IF NOT EXISTS `category`(
     categoryNo INT(3) NOT NULL,
     categoryName VARCHAR(20) NOT NULL,
@@ -30,5 +27,5 @@ CREATE TABLE IF NOT EXISTS `task`(
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 insert into task (taskNo, categoryNo, dueDate, details, taskStatus) values
-	(1, 1, '2022-08-15', 'Long quiz #1', "Not yet started"),
-	(2, 2, '2022-07-02', 'Exercise #4', "In-progress");
+	(1, 1, str_to_date('15-OCT-2022','%d-%M-%Y'), 'Long quiz #1', "Not yet started"),
+	(2, 2, str_to_date('02-JUN-2022','%d-%M-%Y'), 'Exercise #4', "In-progress");
