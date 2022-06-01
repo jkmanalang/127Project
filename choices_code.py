@@ -9,8 +9,8 @@ def addCreateTask ():
 def editTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.editTask()
 
-def deleteTask ():
-	print("in delete task")
+def deleteTask (): #DONE!!!
+	functions.deleteTask()
 
 def markAsDone (): #DONE!!!
 	functions.markAsDone()
