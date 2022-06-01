@@ -264,7 +264,7 @@ def addTask():
 		task_dueDate_month = getIntInput(1,12,"Due date(month)")
 
 		#to specifically limit number of days in the selected month	
-		mon31= [1,3,5,7,8,10,11]
+		mon31= [1,3,5,7,8,10,12]
 		dateNumMax= 0
 		if task_dueDate_month==2:
 			dateNumMax = 28
