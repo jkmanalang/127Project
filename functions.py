@@ -295,61 +295,56 @@ def autoMissed():
 	mycursor.execute(sql)
 	mydb.commit()
 
+
 def markAsDone():
 	print("\n----------------------------- mark as done -----------------------------")
 	category_task = getAllCategoriesAndTasks()
-	found= False
 
 	# Keep this straight
 	for i in category_task:
 		print("\t"+str(i[3])+".\t["+i[1]+"] "+i[5]+"\t........"+i[6]+ " (due: "+i[4].strftime("%m/%d/%Y")+")")
 
-
 	task_no = getIntInput(1,getHighestTaskNo(),"Mark as done task_no ")
-	for i in category_task:
-		if(task_no==i[3]):
-			found= True
-			break
 	
-	if (found):
-		sql="UPDATE task SET taskStatus='DONE' WHERE taskno=" + str(task_no)
-		mycursor.execute(sql)
-		mydb.commit()
-		print("Task status updated!")
+	sql="UPDATE task SET taskStatus='DONE' WHERE taskno=" + str(task_no)
+	mycursor.execute(sql)
+	mydb.commit()
+	print("Task status updated!")
 	
-	else:
-		print("Task doesn't exist")
-
 
 def deleteTask():
 	print("\n----------------------------- delete task -----------------------------")
 	category_task = getAllCategoriesAndTasks()
-	found= False
-	
+
 	for i in category_task:
 		print("\t"+str(i[3])+".\t["+i[1]+"] "+i[5]+"\t........"+i[6]+ " (due: "+i[4].strftime("%m/%d/%Y")+")")
 
 
 	task_no = getIntInput(1,getHighestTaskNo(),"Delete task_no ")
-	for i in category_task:
-		if(task_no==i[3]):
-			found= True
-			break
 	
-	if (found):
-		print("The deleted data will not be retrieved. Proceed with deletion? \n[Press [y] to delete, press any key to cancel]")
-		go = input()
+	print("The deleted data will not be retrieved. Proceed with deletion? \n[Press [y] to delete, press any key to cancel]")
+	go = input()
 
-		if go=='y':	
-			sql="DELETE FROM task WHERE taskno=" + str(task_no)
-			mycursor.execute(sql)
-			mydb.commit()
-			print("Task_no ",task_no," deleted succesfully!")
-		else:
-			print("Deleting task cancelled")
-	
+	if go=='y':	
+		sql="DELETE FROM task WHERE taskno=" + str(task_no)
+		mycursor.execute(sql)
+		mydb.commit()
+		print("Task_no ",task_no," deleted succesfully!")
+		
+		# to decrement taskNo of all tasks above the deleted task, 
+		# ensures that there are no missing tasks in 1-max(taskNo), all taskNo in options exist
+		sql= "UPDATE task SET taskNo = taskNo-1 WHERE taskno>"+str(task_no)
+		mycursor.execute(sql)
+		mydb.commit()
+		print("Tasks task_number updated!")
+
 	else:
-		print("Task doesn't exist")
+		print("Deleting task cancelled")
+	
+
+
+	
+
 
 
 	
