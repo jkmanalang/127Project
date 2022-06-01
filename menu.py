@@ -26,7 +26,7 @@ while True:
    [q] Quit
 ================================================\n""")
 
-	user_choice = functions.get_user_answer()
+	user_choice = functions.getUserAnswer()
 
 	if user_choice == "0":
 		choices_code.viewTask()
