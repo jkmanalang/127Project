@@ -5,7 +5,6 @@ Program: Task Record System (A.Y. 2021-2022 Second Semester - 127 Project)
 
 """
 
-import os
 import choices_code
 import functions
 

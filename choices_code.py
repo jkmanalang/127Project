@@ -1,8 +1,6 @@
-import os
 import functions
-# import ast
 
-def viewTask ():
+def viewTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.showTasks()
 
 def addCreateTask ():
@@ -17,8 +15,7 @@ def deleteTask ():
 def markAsDone ():
 	print("in mark as done")
 
-def addCategory ():
-	print("in add category")
+def addCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.addCategory()
 
 def editCategory ():
@@ -27,8 +24,8 @@ def editCategory ():
 def deleteCategory ():
 	print("in delete category")
 
-def viewCategory ():
-	print("in view category")
+def viewCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+	functions.viewCategory()
 
 def addTaskToCategory ():
 	print("in adding task to category")

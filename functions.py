@@ -1,5 +1,3 @@
-import random
-import os
 import mysql.connector
 import datetime
 
@@ -34,6 +32,28 @@ def getHighestCategoryNo():
 
 	return (highest[0])
 
+def getAllCategories():
+	get_categories = "SELECT * FROM category"
+	mycursor.execute(get_categories)
+
+	categories = []
+
+	for i in mycursor:
+		categories.append(i)
+
+	return categories
+
+def getAllTasks():
+	get_tasks = "SELECT * FROM task"
+	mycursor.execute(get_tasks)
+
+	tasks = []
+
+	for i in mycursor:
+		tasks.append(i)
+
+	return tasks
+
 def showTasks():
 	print("\n----------------------------- Viewing tasks -----------------------------")
 
@@ -45,22 +65,19 @@ def showTasks():
 	for i in mycursor:
 		tasks.append(i)
 
-	# getting categories and storing it to 'categories' list
-	get_categories = "SELECT * FROM category"
-	mycursor.execute(get_categories)
-	categories = []
-
-	for i in mycursor:
-		categories.append(i)
+	# getting category list
+	categories = getAllCategories()
 
 	# printing categories together with their tasks
+	counter = 1
 	for i in categories:
-		print(i[1])
+		print(str(counter) + ") " + i[1])
 		for j in tasks:
 			if(i[0] == j[0]):	# using datetime library to convert date to string
 				print("\t[" + j[4].strftime("%m/%d/%Y") + "]\t\t" + j[6] + " \t\t " + j[5])
 
 		# print("\n")
+		counter += 1
 
 def addCategory():
 	print("\n----------------------------- Adding Category -----------------------------")
@@ -86,6 +103,7 @@ def addCategory():
 	else:
 		categoryType = "Others"
 
+	# inserting to database
 	insertCategoryStatement = "INSERT INTO category (categoryNo, categoryName, categoryType) VALUES (%s, %s, %s)"
 	values = (categoryNo, categoryName, categoryType)
 
@@ -96,3 +114,33 @@ def addCategory():
 
 
 
+def viewCategory():
+	print("\n----------------------------- Viewing Category -----------------------------")
+	
+	print("Which category you want to view?")
+
+	categories = getAllCategories()
+
+	for i in categories:
+		print("\t[" + str(i[0]) + "] " + i[1])
+
+	userChoice = getIntInput(1, getHighestCategoryNo(), "Category")
+
+	print("\n")
+
+	for i in categories:
+		if (i[0] == userChoice):
+			print("Category name: " + i[1])
+			print("Category type: " + i[2])
+		
+	print("Tasks:")
+
+	tasks = getAllTasks()
+	counter = 0
+	for i in tasks:
+		if(i[1] == userChoice):
+			print("\t[" + i[2].strftime("%m/%d/%Y") + "]\t\t" + i[4] + " \t\t " + i[3])
+			counter += 1
+	
+	if(counter == 0):
+		print("\t [no task yet]")
