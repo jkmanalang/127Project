@@ -19,6 +19,7 @@ def markAsDone ():
 
 def addCategory ():
 	print("in add category")
+	functions.addCategory()
 
 def editCategory ():
 	print("in edit category")
