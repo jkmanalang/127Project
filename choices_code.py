@@ -6,8 +6,8 @@ def viewTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 def addCreateTask ():
 	print("in add / create task")
 
-def editTask ():
-	print("in edit task")
+def editTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+	functions.editTask()
 
 def deleteTask ():
 	print("in delete task")
