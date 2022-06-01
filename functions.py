@@ -234,3 +234,88 @@ def editTask():
 
 		else: break
 		print("\n")
+		
+
+def addTask():
+	# Add task to an existing category
+	print("\n----------------------------- Add task -----------------------------")
+	categories = getAllCategories()
+	found = False
+	cName = ""
+
+	# shows all existing categories
+	print("Category_no\tCategory_name")
+	for i in categories:
+		print(str(i[0])+"\t\t"+i[1])
+	
+	category_num= getIntInput(1,getHighestCategoryNo(), "Add task to category_no")
+
+	# checks if chosen category_num still exist in category
+	for i in categories:
+		if(category_num==i[0]):
+			found= True
+			cName = i[1]
+	
+	if (found):
+		task_details = input("Task details: ")
+
+		# limit year to 50 years from now
+		task_dueDate_year = getIntInput(2022,2072,"Due date(year)")	
+		task_dueDate_month = getIntInput(1,12,"Due date(month)")
+
+		#to specifically limit number of days in the selected month	
+		mon31= [1,3,5,7,8,10,11]
+		dateNumMax= 0
+		if task_dueDate_month==2:
+			dateNumMax = 28
+			if task_dueDate_year%4==0:
+				dateNumMax= 29
+		elif task_dueDate_month in mon31:
+			dateNumMax=31
+		else:
+			dateNumMax=30
+		task_dueDate_day = getIntInput(1,dateNumMax,"Due date(month)")	
+
+		data= (category_num,task_dueDate_day, task_dueDate_month, task_dueDate_year ,task_details)
+		sql = "INSERT INTO task(categoryNo, dueDate, details) VALUES(%s, STR_TO_DATE('%s-%s-%s','%d-%m-%Y'), %s)"
+
+		try:
+			mycursor.execute(sql,data)
+			mydb.commit()
+			autoMissed()
+			print("New task was added to ",cName, " successfully!")
+		except:
+			print("Adding task failed")	
+	
+	else: 
+		print("Category does not exist")
+
+def autoMissed():
+	sql = "UPDATE task SET taskStatus='MISSED' WHERE dueDate < CURDATE()"
+	mycursor.execute(sql)
+	mydb.commit()
+
+def markAsDone():
+	print("\n----------------------------- mark as done -----------------------------")
+	category_task = getAllCategoriesAndTasks()
+	found= False
+
+	# Keep this straight
+	for i in category_task:
+		print("\t"+str(i[3])+".\t["+i[1]+"] "+i[5]+"\t........"+i[6]+ " (due: "+i[4].strftime("%m/%d/%Y")+")")
+
+
+	task_no = getIntInput(1,getHighestTaskNo(),"Mark as done task_no ")
+	for i in category_task:
+		if(task_no==i[0]):
+			found= True
+			break
+	
+	if (found):
+		sql="UPDATE task SET taskStatus='DONE' WHERE taskno=" + str(task_no)
+		mycursor.execute(sql)
+		mydb.commit()
+		print("Task status updated!")
+	
+	else:
+		print("Task doesn't exist")
