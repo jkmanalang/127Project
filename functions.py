@@ -115,10 +115,6 @@ def showTasks():
 def addCategory():
 	print("\n----------------------------- Adding Category -----------------------------")
 
-	# getting category number
-	categoryNo = getHighestCategoryNo()
-	categoryNo += 1
-
 	# getting category name
 	categoryName = input("Category name: ")
 
@@ -137,8 +133,8 @@ def addCategory():
 		categoryType = "Others"
 
 	# inserting to database
-	insertCategoryStatement = "INSERT INTO category (categoryNo, categoryName, categoryType) VALUES (%s, %s, %s)"
-	values = (categoryNo, categoryName, categoryType)
+	insertCategoryStatement = "INSERT INTO category (categoryName, categoryType) VALUES (%s, %s)"
+	values = (categoryName, categoryType)
 
 	mycursor.execute(insertCategoryStatement, values)
 
@@ -234,6 +230,7 @@ def editTask():
 				if (x == status):
 					mycursor.execute("UPDATE task SET taskStatus=%s WHERE taskNo=%s", (y, userChoice))
 					mydb.commit()
+					break
 
 		else: break
 		print("\n")
