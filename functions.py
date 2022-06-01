@@ -62,8 +62,6 @@ def showTasks():
 
 		# print("\n")
 
-
-
 def addCategory():
 	print("\n----------------------------- Adding Category -----------------------------")
 
