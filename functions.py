@@ -307,7 +307,7 @@ def markAsDone():
 
 	task_no = getIntInput(1,getHighestTaskNo(),"Mark as done task_no ")
 	for i in category_task:
-		if(task_no==i[0]):
+		if(task_no==i[3]):
 			found= True
 			break
 	
@@ -319,3 +319,39 @@ def markAsDone():
 	
 	else:
 		print("Task doesn't exist")
+
+
+def deleteTask():
+	print("\n----------------------------- delete task -----------------------------")
+	category_task = getAllCategoriesAndTasks()
+	found= False
+	
+	for i in category_task:
+		print("\t"+str(i[3])+".\t["+i[1]+"] "+i[5]+"\t........"+i[6]+ " (due: "+i[4].strftime("%m/%d/%Y")+")")
+
+
+	task_no = getIntInput(1,getHighestTaskNo(),"Delete task_no ")
+	for i in category_task:
+		if(task_no==i[3]):
+			found= True
+			break
+	
+	if (found):
+		print("The deleted data will not be retrieved. Proceed with deletion? \n[Press [y] to delete, press any key to cancel]")
+		go = input()
+
+		if go=='y':	
+			sql="DELETE FROM task WHERE taskno=" + str(task_no)
+			mycursor.execute(sql)
+			mydb.commit()
+			print("Task_no ",task_no," deleted succesfully!")
+		else:
+			print("Deleting task cancelled")
+	
+	else:
+		print("Task doesn't exist")
+
+
+	
+
+
