@@ -198,9 +198,8 @@ def editTask():
 		for i in categoryAndTask:
 			if(userChoice == i[3]):
 				print("\t[1] Details: " + i[5])
-				print("\t[2] Category: " + i[1])
-				print("\t[3] Deadline: " + i[4].strftime("%m/%d/%Y"))
-				print("\t[4] Status: " + i[6])
+				print("\t[2] Deadline: " + i[4].strftime("%m/%d/%Y"))
+				print("\t[3] Status: " + i[6])
 				print("\t[0] Exit")
 		editChoice = getIntInput(0, 3, "Choice")
 
@@ -209,6 +208,7 @@ def editTask():
 			while True:
 				value = input ("New task name: ")
 				if (value != ""): break
+				print("Name must not be empty")
 
 			mycursor.execute("UPDATE task SET details=%s WHERE taskNo=%s", (value, userChoice))
 			mydb.commit()
