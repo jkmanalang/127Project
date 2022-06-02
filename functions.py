@@ -1,7 +1,7 @@
 import mysql.connector
 import datetime
 
-mydb = mysql.connector.connect(host="localhost", user="root", passwd="johnlimxy", database="task_record")
+mydb = mysql.connector.connect(host="localhost", user="root", passwd="happynewyearmariadb", database="task_record")
 mycursor = mydb.cursor()
 
 def getUserAnswer():
@@ -202,23 +202,18 @@ def editTask():
 				print("\t[3] Deadline: " + i[4].strftime("%m/%d/%Y"))
 				print("\t[4] Status: " + i[6])
 				print("\t[0] Exit")
-		editChoice = getIntInput(0, 4, "Choice")
+		editChoice = getIntInput(0, 3, "Choice")
 
 		# updating the database
 		if(editChoice == 1):
-			value = input ("New task name: ")
+			while True:
+				value = input ("New task name: ")
+				if (value != ""): break
 
 			mycursor.execute("UPDATE task SET details=%s WHERE taskNo=%s", (value, userChoice))
 			mydb.commit()
 		
 		elif(editChoice == 2):
-			showListOfCategories()
-			value = getIntInput(1, getHighestCategoryNo(), "Category")
-
-			mycursor.execute("UPDATE task SET categoryNo=%s WHERE taskNo=%s", (value, userChoice))
-			mydb.commit()
-
-		elif(editChoice == 3):
 			month = getIntInput(1, 12, "Month")
 			day = getIntInput(1, 31, "Day")
 			year = getIntInput(2000, 9999, "Year")
@@ -226,7 +221,7 @@ def editTask():
 			mycursor.execute("UPDATE task SET dueDate='%s/%s/%s' WHERE taskNo=%s", (year, month, day, userChoice))
 			mydb.commit()
 
-		elif(editChoice == 4):
+		elif(editChoice == 3):
 			status_dict = showTaskStatus()
 			status = getIntInput(1, 4, "Status")
 

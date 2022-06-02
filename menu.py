@@ -21,7 +21,7 @@ while True:
    [6] Edit category
    [7] Delete category
    [8] View category
-   [9] Add task to a category
+   [9] Move task to category
    [q] Quit
 ================================================\n""")
 
