@@ -240,7 +240,7 @@ def editTask():
 		print("\n")
 		
 
-def addTask():
+def createTask():
 	# Add task to an existing category
 	print("\n----------------------------- Add task -----------------------------")
 	categories = getAllCategories()
