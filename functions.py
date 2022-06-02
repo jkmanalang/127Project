@@ -1,7 +1,7 @@
 import mysql.connector
 import datetime
 
-mydb = mysql.connector.connect(host="localhost", user="root", passwd="happynewyearmariadb", database="task_record")
+mydb = mysql.connector.connect(host="localhost", user="root", passwd="johnlimxy", database="task_record")
 mycursor = mydb.cursor()
 
 def getUserAnswer():
@@ -221,7 +221,7 @@ def editTask():
 		elif(editChoice == 3):
 			month = getIntInput(1, 12, "Month")
 			day = getIntInput(1, 31, "Day")
-			year = getIntInput(2000, 9999, "Day")
+			year = getIntInput(2000, 9999, "Year")
 
 			mycursor.execute("UPDATE task SET dueDate='%s/%s/%s' WHERE taskNo=%s", (year, month, day, userChoice))
 			mydb.commit()
