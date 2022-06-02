@@ -208,7 +208,7 @@ def editTask():
 			while True:
 				value = input ("New task name: ")
 				if (value != ""): break
-				print("Name must not be empty")
+				print("Name must not be empty\n")
 
 			mycursor.execute("UPDATE task SET details=%s WHERE taskNo=%s", (value, userChoice))
 			mydb.commit()
