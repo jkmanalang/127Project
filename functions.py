@@ -83,9 +83,9 @@ def showListOfCategories():
 
 # to print status choices. can also give status in dictionary form
 def showTaskStatus():
-	status_dict = {1:"Not yet started",
-	2:"In-progress", 3:"Missed",
-	4:"Completed"}
+	status_dict = {1:"NOT YET STARTED",
+	2:"IN-PROGRESS", 3:"MISSED",
+	4:"COMPLETED"}
 
 	for x, y in status_dict.items():
 		print("   [" + str(x) + "] " + y)
@@ -103,12 +103,16 @@ def showTasks():
 
 	# printing categories together with their tasks
 	counter = 1
+	status_dict = {1:"NOT YET STARTED",
+	2:"IN-PROGRESS", 3:"MISSED",
+	4:"COMPLETED"}
 	for i in categories:
 		print(str(counter) + ") " + i[1])
 		for j in categoryAndTask:
 			if(i[0] == j[0]):	# using datetime library to convert date to string
-				print("\t[" + j[4].strftime("%m/%d/%Y") + "]\t\t" + j[6] + " \t\t " + j[5])
-
+				print("\t[" + j[4].strftime("%m/%d/%Y") + "]\t\t" + j[6], end="")
+				if (j[6] == status_dict.get(2) or j[6] == status_dict.get(1)): print("\t\t" + j[5])
+				else : print("\t\t\t" + j[5])
 		# print("\n")
 		counter += 1
 
