@@ -3,8 +3,8 @@ import functions
 def viewTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.showTasks()
 
-def addCreateTask ():
-	print("in add / create task")
+def addCreateTask (): # DONE !!!
+	functions.createTask()
 
 def editTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.editTask()
@@ -27,7 +27,7 @@ def deleteCategory ():
 def viewCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.viewCategory()
 
-def addTaskToCategory ():#DONE!!!
-	functions.addTask()
+def addTaskToCategory ():
+	print("add task to category")
 
 	
