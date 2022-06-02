@@ -148,6 +148,7 @@ def addCategory():
 
 
 def viewCategory():
+	autoMissedUnMissed()
 	print("\n----------------------------- Viewing Category -----------------------------")
 	
 	# getting which category to view
@@ -220,6 +221,7 @@ def editTask():
 
 			mycursor.execute("UPDATE task SET dueDate='%s/%s/%s' WHERE taskNo=%s", (year, month, day, userChoice))
 			mydb.commit()
+			autoMissedUnMissed()
 
 		elif(editChoice == 3):
 			status_dict = showTaskStatus()
@@ -281,7 +283,7 @@ def createTask():
 		try:
 			mycursor.execute(sql,data)
 			mydb.commit()
-			autoMissed()
+			autoMissedUnMissed()
 			print("New task was added to ",cName, " successfully!")
 		except:
 			print("Adding task failed")	
@@ -289,8 +291,12 @@ def createTask():
 	else: 
 		print("Category does not exist")
 
-def autoMissed():
+def autoMissedUnMissed():
 	sql = "UPDATE task SET taskStatus='MISSED' WHERE dueDate < CURDATE()"
+	mycursor.execute(sql)
+	mydb.commit()
+	
+	sql = "UPDATE task SET taskStatus='NOT YET STARTED' WHERE taskStatus='MISSED' AND dueDate>CURDATE()"
 	mycursor.execute(sql)
 	mydb.commit()
 
