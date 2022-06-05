@@ -355,6 +355,78 @@ def deleteTask():
 	
 
 
+def deleteCategory():
+	print("\n----------------------------- delete category -----------------------------")
+	category_task = getAllCategoriesAndTasks()
+	categories= getAllCategories()
+	mycursor.execute("SELECT DISTINCT(categoryNo), COUNT(taskNo) FROM task GROUP BY categoryNo")
+
+	numoftask = []
+	for i in mycursor:
+		numoftask.append(i)
+
+	distinct_cat=[]
+	# prints categories with tasks
+	for i in categories:
+		for j in numoftask:
+			if i[0]==j[0] and i[1] not in distinct_cat:
+				print("\t"+str(i[0])+".\t"+i[1]+" ["+str(j[1])+" tasks]")
+				distinct_cat.append(i[1])
+	
+	# prints categories with tasks
+	for i in categories:
+		if i[1] not in distinct_cat:
+			print("\t"+str(i[0])+".\t"+i[1]+" [empty]")
+			distinct_cat.append(i[1])
+
+	cat_no = getIntInput(1,getHighestCategoryNo(),"Delete category_no")
+
+	print("List of tasks in category_no ",cat_no)
+	for i in category_task:
+		if i[0]==cat_no:
+			print("\t[" + i[6] + "] "+ i[5] +" (due: "+i[4].strftime("%m/%d/%Y")+")")
+	
+	print("Deleting a category also deletes all tasks in the category. Proceed with deletion? \n[Press [y] to delete, press any key to cancel]")
+	go = input()
+
+	if go=='y':	
+		# creates temporary table that stores all category_task that is above the category that will be deleted
+		createTempCat = "CREATE TABLE tempcat AS SELECT * FROM category WHERE categoryNo>"+str(cat_no)
+		createTempTask = "CREATE TABLE temptask AS SELECT * FROM task WHERE categoryNo>"+str(cat_no)
+		mycursor.execute(createTempCat)
+		mycursor.execute(createTempTask)
+		mydb.commit()
+
+		# decrement all categoryNo values
+		mycursor.execute("UPDATE tempcat SET categoryNo= categoryNo-1")
+		mycursor.execute("UPDATE temptask SET categoryNo= categoryNo-1")
+		mydb.commit()
+
+		# deletes rows that has categoryNo greater than or equal to the selected categoryNo
+		deletetasks = "DELETE FROM task WHERE categoryNo >="+str(cat_no)
+		deletecat = "DELETE FROM category WHERE categoryNo >="+str(cat_no)
+		mycursor.execute(deletetasks)
+		mycursor.execute(deletecat)
+		mydb.commit()
+
+
+		# insert all data from the temporary table
+		mycursor.execute("INSERT INTO category(categoryNo, categoryName, categoryType) SELECT * FROM tempcat")
+		mycursor.execute("INSERT INTO task(taskNo, categoryNo, dueDate, details, taskStatus) SELECT * FROM temptask")
+		mydb.commit()
+
+		# deletes temporary table
+		mycursor.execute("DROP TABLE tempcat")
+		mycursor.execute("DROP TABLE temptask")
+		mydb.commit()
+		
+		print("Category_no ",cat_no," and tasks inside deleted successfully!")
+		print("Category_task updated!")
+
+	else:
+		print("Deleting category cancelled")
+
+		
 def editCategory(): #Function to edit the Category's name and type
 	print("\n----------------------------- Editing Category -----------------------------")
 	print("Which category do you want to edit?")
