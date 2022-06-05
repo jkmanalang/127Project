@@ -92,29 +92,57 @@ def showTaskStatus():
 
 	return status_dict
 
+def showCategoryTypes():
+	cType_dict = {1:"Personal",
+	2:"Professional",
+	3:"Others"
+	}
+
+	for x, y in cType_dict.items():
+		print("   [" + str(x) + "] " + y)
+
+	return cType_dict	
+
 def showTasks():
 	print("\n----------------------------- Viewing tasks -----------------------------")
 
-	# join every task with their category and storing it to 'tasks' list
-	categoryAndTask = getAllCategoriesAndTasks()
+	print("""
+   [1] View by category
+   [2] View by day
+   [3] View by month""")
 
-	# getting category list
-	categories = getAllCategories()
+	user_choice = getIntInput(1, 3, "View by:")
 
-	# printing categories together with their tasks
-	counter = 1
-	status_dict = {1:"NOT YET STARTED",
-	2:"IN-PROGRESS", 3:"MISSED",
-	4:"COMPLETED"}
-	for i in categories:
-		print(str(counter) + ") " + i[1])
-		for j in categoryAndTask:
-			if(i[0] == j[0]):	# using datetime library to convert date to string
-				print("\t[" + j[4].strftime("%m/%d/%Y") + "]\t\t" + j[6], end="")
-				if (j[6] == status_dict.get(2) or j[6] == status_dict.get(1)): print("\t\t" + j[5])
-				else : print("\t\t\t" + j[5])
-		# print("\n")
-		counter += 1
+	print("\n")
+
+	if user_choice == 1:
+
+		# join every task with their category and storing it to 'tasks' list
+		categoryAndTask = getAllCategoriesAndTasks()
+
+		# getting category list
+		categories = getAllCategories()
+
+		# printing categories together with their tasks
+		counter = 1
+		status_dict = {1:"NOT YET STARTED",
+		2:"IN-PROGRESS", 3:"MISSED",
+		4:"COMPLETED"}
+		for i in categories:
+			print(str(counter) + ") " + i[1])
+			for j in categoryAndTask:
+				if(i[0] == j[0]):	# using datetime library to convert date to string
+					print("\t[" + j[4].strftime("%m/%d/%Y") + "]\t\t" + j[6], end="")
+					if (j[6] == status_dict.get(2) or j[6] == status_dict.get(1)): print("\t\t" + j[5])
+					else : print("\t\t\t" + j[5])
+			# print("\n")
+			counter += 1
+
+	elif user_choice == 2:
+		print("in view by day")
+
+	else:
+		print("in view by month")
 
 def addCategory():
 	print("\n----------------------------- Adding Category -----------------------------")
@@ -442,8 +470,8 @@ def editCategory(): #Function to edit the Category's name and type
 		print("\nChoose what you want to edit")
 		for i in categories:
 			if(userChoice == i[0]):
-				print("\t[1] Name: ")
-				print("\t[2] Type: ")
+				print("\t[1] Name: " + i[1])
+				print("\t[2] Type: " + i[2])
 				print("\t[0] Exit")
 		editChoice = getIntInput(0, 2, "Choice")
 
@@ -456,12 +484,15 @@ def editCategory(): #Function to edit the Category's name and type
 			mydb.commit()
 		
 		elif (editChoice == 2): #Edits the Category type
-			while True:
-				value = input ("Update category type: ")
-				if (value != ""): break
-				print("Type must not be empty\n")
-			mycursor.execute("UPDATE category SET categoryType=%s WHERE categoryNo=%s", (value, userChoice))
-			mydb.commit()
+			cType_dict = showCategoryTypes()
+			cType = getIntInput(1, 3, "Category type")
+
+			for x, y in cType_dict.items():
+				if (x == cType):
+					mycursor.execute("UPDATE category SET categoryType=%s WHERE categoryNo=%s", (y, userChoice))
+					mydb.commit()
+					break	
+
 
 		else: #Stops the function
 			break
