@@ -353,6 +353,8 @@ def deleteTask():
 	else:
 		print("Deleting task cancelled")
 	
+
+
 def editCategory(): #Function to edit the Category's name and type
 	print("\n----------------------------- Editing Category -----------------------------")
 	print("Which category do you want to edit?")
