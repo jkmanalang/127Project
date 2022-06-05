@@ -20,6 +20,7 @@ def addCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 def editCategory ():
 	print("in edit category")
+	functions.editCategory()
 
 def deleteCategory ():
 	print("in delete category")

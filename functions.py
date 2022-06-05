@@ -1,7 +1,7 @@
 import mysql.connector
 import datetime
 
-mydb = mysql.connector.connect(host="localhost", user="root", passwd="happynewyearmariadb", database="task_record")
+mydb = mysql.connector.connect(host="localhost", user="root", passwd="johnlimxy", database="task_record")
 mycursor = mydb.cursor()
 
 def getUserAnswer():
@@ -346,12 +346,42 @@ def deleteTask():
 	else:
 		print("Deleting task cancelled")
 	
+def editCategory(): #Function to edit the Category's name and type
+	print("\n----------------------------- Editing Category -----------------------------")
+	print("Which category do you want to edit?")
 
-
+	categories = getAllCategories()
 	
+	for i in categories: #Choosing which Category to edit
+		print("\t[" + str(i[0]) + "] " + i[1] )
+	userChoice = getIntInput(1, getHighestCategoryNo(), "Category")
 
+	while(True): #Choosing what function to do to the Category
+		categories = getAllCategories()
+		print("\nChoose what you want to edit")
+		for i in categories:
+			if(userChoice == i[0]):
+				print("\t[1] Name: ")
+				print("\t[2] Type: ")
+				print("\t[0] Exit")
+		editChoice = getIntInput(0, 2, "Choice")
 
+		if (editChoice == 1): #Edits the Category name 
+			while True:
+				value = input ("New category name: ")
+				if (value != ""): break
+				print("Name must not be empty\n")
+			mycursor.execute("UPDATE category SET categoryName=%s WHERE categoryNo=%s", (value, userChoice))
+			mydb.commit()
+		
+		elif (editChoice == 2): #Edits the Category type
+			while True:
+				value = input ("Update category type: ")
+				if (value != ""): break
+				print("Type must not be empty\n")
+			mycursor.execute("UPDATE category SET categoryType=%s WHERE categoryNo=%s", (value, userChoice))
+			mydb.commit()
 
-	
-
-
+		else: #Stops the function
+			break
+			print("\n")
