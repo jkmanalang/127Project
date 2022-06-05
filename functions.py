@@ -283,11 +283,25 @@ def editTask():
 			mydb.commit()
 		
 		elif(editChoice == 2):
-			month = getIntInput(1, 12, "Month")
-			day = getIntInput(1, 31, "Day")
-			year = getIntInput(2000, 9999, "Year")
 
-			mycursor.execute("UPDATE task SET dueDate='%s/%s/%s' WHERE taskNo=%s", (year, month, day, userChoice))
+			task_dueDate_year = getIntInput(2022, 2072, "Due date (year)")
+			task_dueDate_month = getIntInput(1, 12, "Due date (month)")
+			#to specifically limit number of days in the selected month	
+			mon31= [1,3,5,7,8,10,12]
+			dateNumMax= 0
+			if task_dueDate_month==2:
+				dateNumMax = 28
+				if task_dueDate_year%4==0:
+					dateNumMax= 29
+			elif task_dueDate_month in mon31:
+				dateNumMax=31
+			else:
+				dateNumMax=30
+
+			day = getIntInput(1, dateNumMax, "Due date (day)")
+			
+
+			mycursor.execute("UPDATE task SET dueDate='%s/%s/%s' WHERE taskNo=%s", (task_dueDate_year, task_dueDate_month, day, userChoice))
 			mydb.commit()
 			autoMissedUnMissed()
 
