@@ -103,6 +103,38 @@ def showCategoryTypes():
 
 	return cType_dict	
 
+def viewByDayMonth(statement):
+	get_taskOrderedByDueDate = statement
+	mycursor.execute(get_taskOrderedByDueDate)
+
+	# this will just be needed for printing purposes only
+	status_dict = {1:"NOT YET STARTED",
+	2:"IN-PROGRESS", 3:"MISSED",
+	4:"COMPLETED"}
+
+	tasks = []
+
+	for i in mycursor:
+		tasks.append(i)
+
+	counter = 0
+
+	while counter < len(tasks):
+		print(tasks[counter][0])
+		nextTask = 0
+		
+		while (counter+nextTask) < len(tasks):
+			if (tasks[counter+nextTask][0] == tasks[counter][0]):
+				print("   " + str(counter+nextTask+1) + ") " + tasks[counter+nextTask][2], end="")
+				# this if-else is just for aligning the strings
+				if (tasks[counter+nextTask][2] == status_dict.get(2) or tasks[counter+nextTask][2] == status_dict.get(1)): print("\t" + tasks[counter+nextTask][3] + " ~ " + tasks[counter+nextTask][1])
+				else : print("\t\t" + tasks[counter+nextTask][3] + " ~ " + tasks[counter+nextTask][1])
+				nextTask += 1
+				continue
+			break
+
+		counter += nextTask
+
 def showTasks():
 	print("\n----------------------------- Viewing tasks -----------------------------")
 
@@ -116,7 +148,7 @@ def showTasks():
 	print("\n")
 
 	if user_choice == 1:
-
+		print("==== viewing by category ====")
 		# join every task with their category and storing it to 'tasks' list
 		categoryAndTask = getAllCategoriesAndTasks()
 
@@ -133,16 +165,19 @@ def showTasks():
 			for j in categoryAndTask:
 				if(i[0] == j[0]):	# using datetime library to convert date to string
 					print("\t[" + j[4].strftime("%m/%d/%Y") + "]\t\t" + j[6], end="")
+					# this if-else is just for aligning the strings
 					if (j[6] == status_dict.get(2) or j[6] == status_dict.get(1)): print("\t\t" + j[5])
 					else : print("\t\t\t" + j[5])
 			# print("\n")
 			counter += 1
 
 	elif user_choice == 2:
-		print("in view by day")
+		print("==== viewing by day ====")
+		viewByDayMonth("SELECT DATE_FORMAT(a.dueDate, '%M %d, %Y'), a.details, a.taskStatus, b.categoryName FROM task AS a NATURAL JOIN category AS b ORDER BY a.dueDate")
 
 	else:
-		print("in view by month")
+		print("==== viewing by month ====")
+		viewByDayMonth("SELECT DATE_FORMAT(a.dueDate, '%M %Y'), a.details, a.taskStatus, b.categoryName FROM task AS a NATURAL JOIN category AS b ORDER BY a.dueDate")
 
 def addCategory():
 	print("\n----------------------------- Adding Category -----------------------------")
@@ -308,7 +343,7 @@ def createTask():
 			dateNumMax=31
 		else:
 			dateNumMax=30
-		task_dueDate_day = getIntInput(1,dateNumMax,"Due date(month)")	
+		task_dueDate_day = getIntInput(1,dateNumMax,"Due date(day)")	
 
 	####################
 		taskno = getHighestTaskNo()+1
