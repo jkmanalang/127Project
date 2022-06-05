@@ -521,45 +521,46 @@ def deleteCategory():
 def editCategory(): #Function to edit the Category's name and type
 	print("\n----------------------------- Editing Category -----------------------------")
 	print("Which category do you want to edit?")
-
-	categories = getAllCategories()
 	
-	for i in categories: #Choosing which Category to edit
-		print("\t[" + str(i[0]) + "] " + i[1] )
-	userChoice = getIntInput(1, getHighestCategoryNo(), "Category")
-
-	while(True): #Choosing what function to do to the Category
+	if isCategoryEmpty():
 		categories = getAllCategories()
-		print("\nChoose what you want to edit")
-		for i in categories:
-			if(userChoice == i[0]):
-				print("\t[1] Name: " + i[1])
-				print("\t[2] Type: " + i[2])
-				print("\t[0] Exit")
-		editChoice = getIntInput(0, 2, "Choice")
 
-		if (editChoice == 1): #Edits the Category name 
-			while True:
-				value = input ("New category name: ")
-				if (value != ""): break
-				print("Name must not be empty\n")
-			mycursor.execute("UPDATE category SET categoryName=%s WHERE categoryNo=%s", (value, userChoice))
-			mydb.commit()
-		
-		elif (editChoice == 2): #Edits the Category type
-			cType_dict = showCategoryTypes()
-			cType = getIntInput(1, 3, "Category type")
+		for i in categories: #Choosing which Category to edit
+			print("\t[" + str(i[0]) + "] " + i[1] )
+		userChoice = getIntInput(1, getHighestCategoryNo(), "Category")
 
-			for x, y in cType_dict.items():
-				if (x == cType):
-					mycursor.execute("UPDATE category SET categoryType=%s WHERE categoryNo=%s", (y, userChoice))
-					mydb.commit()
-					break	
+		while(True): #Choosing what function to do to the Category
+			categories = getAllCategories()
+			print("\nChoose what you want to edit")
+			for i in categories:
+				if(userChoice == i[0]):
+					print("\t[1] Name: " + i[1])
+					print("\t[2] Type: " + i[2])
+					print("\t[0] Exit")
+			editChoice = getIntInput(0, 2, "Choice")
+
+			if (editChoice == 1): #Edits the Category name 
+				while True:
+					value = input ("New category name: ")
+					if (value != ""): break
+					print("Name must not be empty\n")
+				mycursor.execute("UPDATE category SET categoryName=%s WHERE categoryNo=%s", (value, userChoice))
+				mydb.commit()
+
+			elif (editChoice == 2): #Edits the Category type
+				cType_dict = showCategoryTypes()
+				cType = getIntInput(1, 3, "Category type")
+
+				for x, y in cType_dict.items():
+					if (x == cType):
+						mycursor.execute("UPDATE category SET categoryType=%s WHERE categoryNo=%s", (y, userChoice))
+						mydb.commit()
+						break	
 
 
-		else: #Stops the function
-			break
-			print("\n")
+			else: #Stops the function
+				break
+				print("\n")
 
 
 
