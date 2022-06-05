@@ -510,6 +510,7 @@ def deleteCategory():
 			mycursor.execute("DROP TABLE temptask")
 			mydb.commit()
 			
+			updateTaskNos()
 			print("Category_no ",cat_no," and tasks inside deleted successfully!")
 			print("Category_task updated!")
 
@@ -563,6 +564,20 @@ def editCategory(): #Function to edit the Category's name and type
 				print("\n")
 
 
+# this updates the taskNos of the remaining tasks after category deletion
+def updateTaskNos():
+	if isTasksEmpty():
+		task= getAllTasks()
+
+		counter=1
+
+		for i in task:
+			if i[0] != counter:
+				sql = "UPDATE task SET taskNo=%s WHERE taskNo=%s"
+				num = (counter,i[0])
+				mycursor.execute(sql,num)
+				mydb.commit()
+			counter =counter+1
 
 	
 
