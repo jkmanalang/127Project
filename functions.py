@@ -139,7 +139,12 @@ def addCategory():
 	# inserting to database
 	insertCategoryStatement = "INSERT INTO category (categoryName, categoryType) VALUES (%s, %s)"
 	values = (categoryName, categoryType)
-
+##############	
+# 	categoryno = getHighestCategoryNo()+1
+# 	# inserting to database
+# 	insertCategoryStatement = "INSERT INTO category (categoryNo, categoryName, categoryType) VALUES (%s,%s, %s)"
+# 	values = (categoryno, categoryName, categoryType)
+###############	
 	mycursor.execute(insertCategoryStatement, values)
 
 	mydb.commit()
