@@ -282,8 +282,10 @@ def createTask():
 			dateNumMax=30
 		task_dueDate_day = getIntInput(1,dateNumMax,"Due date(month)")	
 
-		data= (category_num,task_dueDate_day, task_dueDate_month, task_dueDate_year ,task_details)
-		sql = "INSERT INTO task(categoryNo, dueDate, details) VALUES(%s, STR_TO_DATE('%s-%s-%s','%d-%m-%Y'), %s)"
+	####################
+		taskno = getHighestTaskNo()+1
+		data= (taskno,category_num,task_dueDate_day, task_dueDate_month, task_dueDate_year ,task_details)
+		sql = "INSERT INTO task(taskNo, categoryNo, dueDate, details) VALUES(%s,%s, STR_TO_DATE('%s-%s-%s','%d-%m-%Y'), %s)"
 
 		try:
 			mycursor.execute(sql,data)
