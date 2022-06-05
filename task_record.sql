@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS `task_record`;
 USE `task_record`;
 
 CREATE TABLE IF NOT EXISTS `category`(
-    categoryNo INT(3) NOT NULL AUTO_INCREMENT,
+    categoryNo INT(3) NOT NULL,
     categoryName VARCHAR(20) NOT NULL,
     categoryType VARCHAR(20) NOT NULL,
     CONSTRAINT category_cateogryNo_pk PRIMARY KEY(categoryNo),
@@ -16,7 +16,7 @@ insert into category (categoryNo, categoryName, categoryType) values
 
 
 CREATE TABLE IF NOT EXISTS `task`(
-    taskNo INT(4) NOT NULL AUTO_INCREMENT,
+    taskNo INT(4) NOT NULL,
     categoryNo INT(3) NOT NULL,
     dueDate DATE NOT NULL,
     details varchar(50) NOT NULL,

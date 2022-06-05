@@ -251,12 +251,19 @@ def viewCategory():
 				print("Category name: " + i[1])
 				print("Category type: " + i[2])
 
+		status_dict = {1:"NOT YET STARTED",
+		2:"IN-PROGRESS", 3:"MISSED",
+		4:"COMPLETED"}
+
 		print("Task/s:")
 		tasks = getAllTasks()
 		counter = 0
 		for i in tasks:
 			if(i[1] == userChoice):
-				print("\t[" + i[2].strftime("%m/%d/%Y") + "]\t\t" + i[4] + " \t\t " + i[3])
+				print("\t[" + i[2].strftime("%m/%d/%Y") + "]\t\t" + i[4], end="")
+				# this if-else is just for aligning the strings
+				if (i[4] == status_dict.get(2) or i[4] == status_dict.get(1)): print("\t\t" + i[3])
+				else : print("\t\t\t" + i[3])
 				counter += 1
 
 		if(counter == 0):
