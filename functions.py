@@ -603,6 +603,6 @@ def addTaskToCategory():
 		print("\t[" + str(i[0]) + "] " + i[1])
 	user_choice_categ = getIntInput(1, getHighestCategoryNo(), "Category")
 
-	mycursor.execute("UPDATE task SET categoryNo=%s WHERE taskNo=%s", (user_choice_task, user_choice_categ))
+	mycursor.execute("UPDATE task SET categoryNo=%s WHERE taskNo=%s", (user_choice_categ, user_choice_task))
 	mydb.commit()
 	print("\nTask successfully moved.")
