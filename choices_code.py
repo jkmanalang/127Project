@@ -29,7 +29,7 @@ def deleteCategory ():
 def viewCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	functions.viewCategory()
 
-def addTaskToCategory ():
-	print("add task to category")
+def addTaskToCategory (): #DONEEE
+	functions.addTaskToCategory()
 
 	

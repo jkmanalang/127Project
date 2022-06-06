@@ -586,6 +586,23 @@ def updateTaskNos():
 				mydb.commit()
 			counter =counter+1
 
-	
+def addTaskToCategory():
+	print("Select task to move: ")
 
+	# getting category with its tasks tuple
+	categoryAndTask = getAllCategoriesAndTasks()
 
+	# getting taskNo of the task to be moved
+	for i in categoryAndTask:
+		print("\t[" + str(i[3]) +"] " + i[5] + " (Category: " + i[1] + ")")	
+	user_choice_task = getIntInput(1, getHighestTaskNo(), "Task")
+
+	print("\nSelect category to move selected task to: ")
+	categories = getAllCategories()
+	for i in categories:
+		print("\t[" + str(i[0]) + "] " + i[1])
+	user_choice_categ = getIntInput(1, getHighestCategoryNo(), "Category")
+
+	mycursor.execute("UPDATE task SET categoryNo=%s WHERE taskNo=%s", (user_choice_task, user_choice_categ))
+	mydb.commit()
+	print("\nTask successfully moved.")
