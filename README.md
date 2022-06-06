@@ -10,5 +10,5 @@ Instructions:
 	C. Open a terminal and go to the directory of the sql file
 	D. Log-in to the root user
 	E. Run a command source task_record.sql
-	F. Open your command prompt and run python menu.py
-  G. Make use of the functions and play around with the database
+	F. Open your command prompt and run python3 menu.py
+  	G. Make use of the functions and play around with the database
