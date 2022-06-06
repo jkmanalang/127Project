@@ -1,35 +1,33 @@
 import functions
 
-def viewTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+def viewTask ():
 	functions.showTasks()
 
-def addCreateTask (): # DONE !!!
+def addCreateTask ():
 	functions.createTask()
 
-def editTask (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+def editTask ():
 	functions.editTask()
 
-def deleteTask (): #DONE!!!
+def deleteTask ():
 	functions.deleteTask()
 
-def markAsDone (): #DONE!!!
+def markAsDone ():
 	functions.markAsDone()
 
-def addCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+def addCategory ():
 	functions.addCategory()
 
 def editCategory ():
-	print("in edit category")
 	functions.editCategory()
 
 def deleteCategory ():
-	print("in delete category")
 	functions.deleteCategory()
 
-def viewCategory (): #DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+def viewCategory ():
 	functions.viewCategory()
 
-def addTaskToCategory (): #DONEEE
+def addTaskToCategory ():
 	functions.addTaskToCategory()
 
 	

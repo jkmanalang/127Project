@@ -1,7 +1,7 @@
 import mysql.connector
 import datetime
 
-mydb = mysql.connector.connect(host="localhost", user="root", passwd="happynewyearmariadb", database="task_record")
+mydb = mysql.connector.connect(host="localhost", user="group1", passwd="group1pass", database="task_record")
 mycursor = mydb.cursor()
 
 def getUserAnswer():
@@ -151,6 +151,32 @@ def viewByDayMonth(statement):
 
 		counter += nextTask
 
+# this automatically sets the status as 'MISSED' or as the default 'NOT YET STARTED' based on the current status and due date
+def autoMissedUnMissed():
+	sql = "UPDATE task SET taskStatus='MISSED' WHERE dueDate < CURDATE()"
+	mycursor.execute(sql)
+	mydb.commit()
+	
+	sql = "UPDATE task SET taskStatus='NOT YET STARTED' WHERE taskStatus='MISSED' AND dueDate>CURDATE()"
+	mycursor.execute(sql)
+	mydb.commit()
+
+# this updates the taskNos of the remaining tasks after category deletion
+def updateTaskNos():
+	if isTasksEmpty():
+		task= getAllTasks()
+
+		counter=1
+
+		for i in task:
+			if i[0] != counter:
+				sql = "UPDATE task SET taskNo=%s WHERE taskNo=%s"
+				num = (counter,i[0])
+				mycursor.execute(sql,num)
+				mydb.commit()
+			counter =counter+1
+
+# [0] View Task (all)
 def showTasks():
 	print("\n----------------------------- Viewing tasks -----------------------------")
 
@@ -195,80 +221,58 @@ def showTasks():
 		print("==== viewing by month ====")
 		viewByDayMonth("SELECT DATE_FORMAT(a.dueDate, '%M %Y'), a.details, a.taskStatus, b.categoryName FROM task AS a NATURAL JOIN category AS b ORDER BY a.dueDate")
 
-def addCategory():
-	print("\n----------------------------- Adding Category -----------------------------")
+# [1] Add/Create task
+# creates a new task and assign it to an existing category
+def createTask():
+	# Add task to an existing category
+	print("\n----------------------------- Add task -----------------------------")
 
-	# getting category name
-	categoryName = input("Category name: ")
+	categories = getAllCategories()
 
-	# getting category type
-	print ("""													
-   [1] Personal
-   [2] Professional
-   [3] Others""")
-
-	categoryTypeNo = getIntInput(1,3,"Category type")
-	if (categoryTypeNo == 1):
-		categoryType = "Personal"
-	elif (categoryTypeNo == 2):
-		categoryType = "Professional"
-	else:
-		categoryType = "Others"
-
-# 	# inserting to database
-# 	insertCategoryStatement = "INSERT INTO category (categoryName, categoryType) VALUES (%s, %s)"
-# 	values = (categoryName, categoryType)
-#############	
-	categoryno = getHighestCategoryNo()+1
-	# inserting to database
-	insertCategoryStatement = "INSERT INTO category (categoryNo, categoryName, categoryType) VALUES (%s,%s, %s)"
-	values = (categoryno, categoryName, categoryType)
-##############	
-	mycursor.execute(insertCategoryStatement, values)
-
-	mydb.commit()
-	print("Category " + categoryName + " successfully added!")
-
-
-
-def viewCategory():
-	autoMissedUnMissed()
-	print("\n----------------------------- Viewing Category -----------------------------")
-	
 	if isCategoryEmpty():
-		# getting which category to view
-		print("Which category you want to view?")
-		categories = getAllCategories()
+		# shows all existing categories
+		print("Category_no\tCategory_name")
 		for i in categories:
-			print("\t[" + str(i[0]) + "] " + i[1])
-		userChoice = getIntInput(1, getHighestCategoryNo(), "Category")
+			print(str(i[0])+"\t\t"+i[1])
+		
+		category_num= getIntInput(1,getHighestCategoryNo(), "Add task to category_no")
+		cName = categories[category_num-1][1]
+	
+		while True:
+			task_details = input("Task details: ")
+			if task_details!="":
+				break
 
-		print("\n")
+		# limit year to 50 years from now
+		task_dueDate_year = getIntInput(2022,2072,"Due date(year)")	
+		task_dueDate_month = getIntInput(1,12,"Due date(month)")
 
-		# printing category attributes together with its tasks available
-		for i in categories:
-			if (i[0] == userChoice):
-				print("Category name: " + i[1])
-				print("Category type: " + i[2])
+		#to specifically limit number of days in the selected month	
+		mon31= [1,3,5,7,8,10,12]
+		dateNumMax= 0
+		if task_dueDate_month==2:
+			dateNumMax = 28
+			if task_dueDate_year%4==0:
+				dateNumMax= 29
+		elif task_dueDate_month in mon31:
+			dateNumMax=31
+		else:
+			dateNumMax=30
+		task_dueDate_day = getIntInput(1,dateNumMax,"Due date(day)")	
+		
+		taskno = getHighestTaskNo()+1
+		data= (taskno,category_num,task_dueDate_day, task_dueDate_month, task_dueDate_year ,task_details)
+		sql = "INSERT INTO task(taskNo, categoryNo, dueDate, details) VALUES(%s,%s, STR_TO_DATE('%s-%s-%s','%d-%m-%Y'), %s)"
 
-		status_dict = {1:"NOT YET STARTED",
-		2:"IN-PROGRESS", 3:"MISSED",
-		4:"COMPLETED"}
+		try:
+			mycursor.execute(sql,data)
+			mydb.commit()
+			autoMissedUnMissed()
+			print("New task was added to ",cName, " successfully!")
+		except:
+			print("Adding task failed")	
 
-		print("Task/s:")
-		tasks = getAllTasks()
-		counter = 0
-		for i in tasks:
-			if(i[1] == userChoice):
-				print("\t[" + i[2].strftime("%m/%d/%Y") + "]\t\t" + i[4], end="")
-				# this if-else is just for aligning the strings
-				if (i[4] == status_dict.get(2) or i[4] == status_dict.get(1)): print("\t\t" + i[3])
-				else : print("\t\t\t" + i[3])
-				counter += 1
-
-		if(counter == 0):
-			print("\t [no task yet]")
-
+# [2] Edit Task
 def editTask():
 	print("\n----------------------------- Editing Task -----------------------------")
 	if isTasksEmpty():
@@ -306,6 +310,8 @@ def editTask():
 				mycursor.execute("UPDATE task SET details=%s WHERE taskNo=%s", (value, userChoice))
 				mydb.commit()
 
+				print("Task name successfully edited!")
+
 			elif(editChoice == 2):
 
 				task_dueDate_year = getIntInput(2022, 2072, "Due date (year)")
@@ -329,6 +335,8 @@ def editTask():
 				mydb.commit()
 				autoMissedUnMissed()
 
+				print("Task due date successfully edited!")
+
 			elif(editChoice == 3):
 				status_dict = showTaskStatus()
 				status = getIntInput(1, 4, "Status")
@@ -339,85 +347,12 @@ def editTask():
 						mydb.commit()
 						break
 
+				print("Task status successfully edited!")
+
 			else: break
 			print("\n")
 
-# creates a new task and assign it to an existing category
-def createTask():
-	# Add task to an existing category
-	print("\n----------------------------- Add task -----------------------------")
-
-	categories = getAllCategories()
-
-	if isCategoryEmpty():
-		# shows all existing categories
-		print("Category_no\tCategory_name")
-		for i in categories:
-			print(str(i[0])+"\t\t"+i[1])
-		
-		category_num= getIntInput(1,getHighestCategoryNo(), "Add task to category_no")
-		cName = categories[category_num-1][1]
-	
-		while True:
-			task_details = input("Task details: ")
-			if task_details!="":
-				break
-
-		# limit year to 50 years from now
-		task_dueDate_year = getIntInput(2022,2072,"Due date(year)")	
-		task_dueDate_month = getIntInput(1,12,"Due date(month)")
-
-		#to specifically limit number of days in the selected month	
-		mon31= [1,3,5,7,8,10,12]
-		dateNumMax= 0
-		if task_dueDate_month==2:
-			dateNumMax = 28
-			if task_dueDate_year%4==0:
-				dateNumMax= 29
-		elif task_dueDate_month in mon31:
-			dateNumMax=31
-		else:
-			dateNumMax=30
-		task_dueDate_day = getIntInput(1,dateNumMax,"Due date(month)")	
-		
-		taskno = getHighestTaskNo()+1
-		data= (taskno,category_num,task_dueDate_day, task_dueDate_month, task_dueDate_year ,task_details)
-		sql = "INSERT INTO task(taskNo, categoryNo, dueDate, details) VALUES(%s,%s, STR_TO_DATE('%s-%s-%s','%d-%m-%Y'), %s)"
-
-		try:
-			mycursor.execute(sql,data)
-			mydb.commit()
-			autoMissedUnMissed()
-			print("New task was added to ",cName, " successfully!")
-		except:
-			print("Adding task failed")	
-	
-# this automatically sets the status as 'MISSED' or as the default 'NOT YET STARTED' based on the current status and due date
-def autoMissedUnMissed():
-	sql = "UPDATE task SET taskStatus='MISSED' WHERE dueDate < CURDATE()"
-	mycursor.execute(sql)
-	mydb.commit()
-	
-	sql = "UPDATE task SET taskStatus='NOT YET STARTED' WHERE taskStatus='MISSED' AND dueDate>CURDATE()"
-	mycursor.execute(sql)
-	mydb.commit()
-
-# allows the user to set the status of the task as 'DONE'
-def markAsDone():
-	print("\n----------------------------- mark as done -----------------------------")
-	category_task = getAllCategoriesAndTasks()
-
-	if isTasksEmpty():
-		for i in category_task:
-			print("\t"+str(i[3])+".\t["+i[1]+"] "+i[5]+"\t........"+i[6]+ " (due: "+i[4].strftime("%m/%d/%Y")+")")
-
-		task_no = getIntInput(1,getHighestTaskNo(),"Mark as done task_no ")
-		
-		sql="UPDATE task SET taskStatus='DONE' WHERE taskno=" + str(task_no)
-		mycursor.execute(sql)
-		mydb.commit()
-		print("Task status updated!")
-	
+# [3] Delete Task
 # deletes task of the chosen task no, decrements taskNos of the affected tasks
 def deleteTask():
 	print("\n----------------------------- delete task -----------------------------")
@@ -447,8 +382,104 @@ def deleteTask():
 
 		else:
 			print("Deleting task cancelled")
-	
 
+# [4] Mark task as done
+# allows the user to set the status of the task as 'DONE'
+def markAsDone():
+	print("\n----------------------------- mark as done -----------------------------")
+	category_task = getAllCategoriesAndTasks()
+
+	if isTasksEmpty():
+		for i in category_task:
+			print("\t"+str(i[3])+".\t["+i[1]+"] "+i[5]+"\t........"+i[6]+ " (due: "+i[4].strftime("%m/%d/%Y")+")")
+
+		task_no = getIntInput(1,getHighestTaskNo(),"Mark as done task_no ")
+		
+		sql="UPDATE task SET taskStatus='DONE' WHERE taskno=" + str(task_no)
+		mycursor.execute(sql)
+		mydb.commit()
+		print("Task status updated!")
+
+# [5] Add category
+def addCategory():
+	print("\n----------------------------- Adding Category -----------------------------")
+
+	# getting category name
+	categoryName = input("Category name: ")
+
+	# getting category type
+	print ("""													
+   [1] Personal
+   [2] Professional
+   [3] Others""")
+
+	categoryTypeNo = getIntInput(1,3,"Category type")
+	if (categoryTypeNo == 1):
+		categoryType = "Personal"
+	elif (categoryTypeNo == 2):
+		categoryType = "Professional"
+	else:
+		categoryType = "Others"
+
+	categoryno = getHighestCategoryNo()+1
+	# inserting to database
+	insertCategoryStatement = "INSERT INTO category (categoryNo, categoryName, categoryType) VALUES (%s,%s, %s)"
+	values = (categoryno, categoryName, categoryType)
+	
+	mycursor.execute(insertCategoryStatement, values)
+
+	mydb.commit()
+	print("Category " + categoryName + " successfully added!")
+
+# [6] Edit category
+def editCategory(): #Function to edit the Category's name and type
+	print("\n----------------------------- Editing Category -----------------------------")
+	print("Which category do you want to edit?")
+	
+	if isCategoryEmpty():
+		categories = getAllCategories()
+
+		for i in categories: #Choosing which Category to edit
+			print("\t[" + str(i[0]) + "] " + i[1] )
+		userChoice = getIntInput(1, getHighestCategoryNo(), "Category")
+
+		while(True): #Choosing what function to do to the Category
+			categories = getAllCategories()
+			print("\nChoose what you want to edit")
+			for i in categories:
+				if(userChoice == i[0]):
+					print("\t[1] Name: " + i[1])
+					print("\t[2] Type: " + i[2])
+					print("\t[0] Exit")
+			editChoice = getIntInput(0, 2, "Choice")
+
+			if (editChoice == 1): #Edits the Category name 
+				while True:
+					value = input ("New category name: ")
+					if (value != ""): break
+					print("Name must not be empty\n")
+				mycursor.execute("UPDATE category SET categoryName=%s WHERE categoryNo=%s", (value, userChoice))
+				mydb.commit()
+
+				print("Category name successfully edited!")
+
+			elif (editChoice == 2): #Edits the Category type
+				cType_dict = showCategoryTypes()
+				cType = getIntInput(1, 3, "Category type")
+
+				for x, y in cType_dict.items():
+					if (x == cType):
+						mycursor.execute("UPDATE category SET categoryType=%s WHERE categoryNo=%s", (y, userChoice))
+						mydb.commit()
+						break	
+
+				print("Category type successfully edited!")
+
+			else: #Stops the function
+				break
+				print("\n")
+
+# [7] Delete category
 # deletes category of the chosen categoryNo, decrements category no of the affected categories and tasks
 def deleteCategory():
 	print("\n----------------------------- delete category -----------------------------")
@@ -524,68 +555,46 @@ def deleteCategory():
 		else:
 			print("Deleting category cancelled")
 
-
-
-def editCategory(): #Function to edit the Category's name and type
-	print("\n----------------------------- Editing Category -----------------------------")
-	print("Which category do you want to edit?")
+# [8] View category
+def viewCategory():
+	autoMissedUnMissed()
+	print("\n----------------------------- Viewing Category -----------------------------")
 	
 	if isCategoryEmpty():
+		# getting which category to view
+		print("Which category you want to view?")
 		categories = getAllCategories()
-
-		for i in categories: #Choosing which Category to edit
-			print("\t[" + str(i[0]) + "] " + i[1] )
+		for i in categories:
+			print("\t[" + str(i[0]) + "] " + i[1])
 		userChoice = getIntInput(1, getHighestCategoryNo(), "Category")
 
-		while(True): #Choosing what function to do to the Category
-			categories = getAllCategories()
-			print("\nChoose what you want to edit")
-			for i in categories:
-				if(userChoice == i[0]):
-					print("\t[1] Name: " + i[1])
-					print("\t[2] Type: " + i[2])
-					print("\t[0] Exit")
-			editChoice = getIntInput(0, 2, "Choice")
+		print("\n")
 
-			if (editChoice == 1): #Edits the Category name 
-				while True:
-					value = input ("New category name: ")
-					if (value != ""): break
-					print("Name must not be empty\n")
-				mycursor.execute("UPDATE category SET categoryName=%s WHERE categoryNo=%s", (value, userChoice))
-				mydb.commit()
+		# printing category attributes together with its tasks available
+		for i in categories:
+			if (i[0] == userChoice):
+				print("Category name: " + i[1])
+				print("Category type: " + i[2])
 
-			elif (editChoice == 2): #Edits the Category type
-				cType_dict = showCategoryTypes()
-				cType = getIntInput(1, 3, "Category type")
+		status_dict = {1:"NOT YET STARTED",
+		2:"IN-PROGRESS", 3:"MISSED",
+		4:"COMPLETED"}
 
-				for x, y in cType_dict.items():
-					if (x == cType):
-						mycursor.execute("UPDATE category SET categoryType=%s WHERE categoryNo=%s", (y, userChoice))
-						mydb.commit()
-						break	
+		print("Task/s:")
+		tasks = getAllTasks()
+		counter = 0
+		for i in tasks:
+			if(i[1] == userChoice):
+				print("\t[" + i[2].strftime("%m/%d/%Y") + "]\t\t" + i[4], end="")
+				# this if-else is just for aligning the strings
+				if (i[4] == status_dict.get(2) or i[4] == status_dict.get(1)): print("\t\t" + i[3])
+				else : print("\t\t\t" + i[3])
+				counter += 1
 
-
-			else: #Stops the function
-				break
-				print("\n")
-
-
-# this updates the taskNos of the remaining tasks after category deletion
-def updateTaskNos():
-	if isTasksEmpty():
-		task= getAllTasks()
-
-		counter=1
-
-		for i in task:
-			if i[0] != counter:
-				sql = "UPDATE task SET taskNo=%s WHERE taskNo=%s"
-				num = (counter,i[0])
-				mycursor.execute(sql,num)
-				mydb.commit()
-			counter =counter+1
-
+		if(counter == 0):
+			print("\t [no task yet]")
+	
+# [9] Move task to category
 def addTaskToCategory():
 	print("Select task to move: ")
 

@@ -2,6 +2,9 @@ DROP DATABASE IF EXISTS `task_record`;
 CREATE DATABASE IF NOT EXISTS `task_record`;
 USE `task_record`;
 
+CREATE USER 'group1'@'localhost' IDENTIFIED BY 'group1pass';
+GRANT ALL ON task_record.* TO 'group1'@'localhost';
+
 CREATE TABLE IF NOT EXISTS `category`(
     categoryNo INT(3) NOT NULL,
     categoryName VARCHAR(20) NOT NULL,
