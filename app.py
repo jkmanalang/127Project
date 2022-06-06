@@ -1,7 +1,13 @@
 """
 Program: Task Record System (A.Y. 2021-2022 Second Semester - 127 Project) 
 
-<names>
+Developers:
+Bartolome, Vallerie 
+Iguin, Mark Allen
+Manalang, John Kenneth 
+Natividad, John Lim
+
+Section: ST1L
 
 """
 
